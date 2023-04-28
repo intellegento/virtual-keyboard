@@ -1173,12 +1173,15 @@ let currentLanguage = 'en'
 let isControlPressed = false
 
 const macLetterKeys = macKeyCodes.filter((key) => {
-  return typeof key.key === 'string' && key.key.length === 10
+  return typeof key.key === 'string' && key.key.length === 1
 })
-console.log(macLetterKeys)
+
+const macLetterKeysfunc = macKeyCodes.filter((key) => {
+  return typeof key.key === 'string' && key.key.length > 1
+})
 
 function isCapsOn () {
-  const capsLockEnabled = window.getComputedStyle(document.querySelector('.keyboard'))['text-transform'] === 'lowercase'
+  const capsLockEnabled = window.getComputedStyle(document.querySelector('.keyboard'))['text-transform'] === 'uppercase'
   return capsLockEnabled
 }
 
@@ -1190,7 +1193,7 @@ function toggleLanguage () {
   const inputFields = document.querySelectorAll('input[type="text"], textarea')
   for (let i = 0; i < inputFields.length; i++) {
     const inputField = inputFields[i]
-    // Меняем содержимое текстовых полей в соответствии с новым языком////////
+    // Меняем содержимое текстовых полей в соответствии с новым языком
     if (currentLanguage === 'ru' && inputField.dataset.ru) {
       inputField.value = inputField.dataset.ru
     } else {
@@ -1203,8 +1206,8 @@ function toggleLanguage () {
   for (let i = 0; i < keyboardKeys.length; i++) {
     const key = keyboardKeys[i]
     const keyCode = key.getAttribute('data-key-code')
-    const keyObj = macKeyCodes.find((k) => k.keyCode === parseInt(keyCode))
-    const keyName = currentLanguage === 'en' ? keyObj.en || keyObj.key : keyObj.ru || keyObj.key
+    const keyObj = macLetterKeys.find((k) => k.keyCode === parseInt(keyCode))
+    const keyName = keyObj ? (currentLanguage === 'en' ? (keyObj.en || keyObj.key) : (keyObj.ru || keyObj.key)) : key.textContent
     key.querySelector('span').textContent = keyName
   }
 }
@@ -1296,7 +1299,7 @@ wrapper.appendChild(macKeyboard)
 wrapper.appendChild(p)
 textarea.focus()
 const keys = document.querySelectorAll('.key')
-
+console.log(keys)
 keys.forEach(key => {
   key.addEventListener('click', (event) => {
     event.preventDefault()
@@ -1304,13 +1307,14 @@ keys.forEach(key => {
     const keyCodeAttr = key.getAttribute('data-key-code')
     if (keyCodeAttr) {
       const keyCode = parseInt(keyCodeAttr)
-      const currentKey = macKeyCodes.find(key => key.keyCode === keyCode)
+      const currentKey = macLetterKeys.find(key => key.keyCode === keyCode)
       const keyChar = currentKey[currentLanguage]
       console.log(keyCode)
       textarea.value += keyChar
     }
   })
 })
+
 
 document.addEventListener('keydown', (event) => {
   const keyCode = event.keyCode
