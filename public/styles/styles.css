@@ -1,16 +1,36 @@
 @font-face {
-    font-family: "SanFrancisco"; 
-    src: url("../font/SF-Pro-Display-Medium.woff") format("truetype"); 
-    font-style: normal; 
-    font-weight: normal; 
-    } 
+    font-family: "SanFrancisco";
+    src: url("../font/SF-Pro-Display-Medium.woff") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    font-size: 24px;
+    font-family: "SanFrancisco";
+    color: grey;
+}
+
+.form {
+    border-radius: 10px 10px 0 0;
+    padding: 20px 10px 40px;
+    background-color: black;
+    /* border: 5px solid black; */
+}
+
 .keyboard {
     display: inline-block;
     box-sizing: border-box;
     border: 1px solid lightgray;
     border-radius: 5px;
     background-color: lightgray;
-    padding: 5px;
+    padding: 20px 5px 5px;
 }
 
 .key-row {
@@ -41,11 +61,13 @@
 }
 
 .key:hover {
-    box-shadow: -2px -2px #fff;
+    background-color: rgb(41, 61, 54);
 }
 
-.key:hover span {
-    text-shadow: 1px 1px 2px #fff;
+.key:active {
+    border-radius: 25px;
+    background-color: rgb(9, 63, 44);
+    ;
 }
 
 .delete,
@@ -60,7 +82,7 @@
 .space {
     font-size: 14px;
     padding: 5px;
-    line-height: 40px; 
+    line-height: 40px;
 }
 
 .delete {
@@ -115,6 +137,7 @@
 .space span {
     display: none;
 }
+
 .arrowup {
     top: 0;
     height: 24px;

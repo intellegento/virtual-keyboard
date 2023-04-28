@@ -69,9 +69,30 @@ const macKeyCodes = [
   { keyCode: 0x7C, keyName: 'arrowright' }
 ]
 
+const wrapper = document.createElement('section')
+wrapper.classList.add('wrapper')
+
+const h1 = document.createElement('h1')
+h1.classList.add('title')
+h1.textContent = 'RSS Virtual Keyboard'
+
+const form = document.createElement('form')
+form.classList.add('form')
+form.action = ''
+form.method = 'post'
+
+// Создаем текстовое поле
+const textarea = document.createElement('textarea')
+textarea.id = 'w3review'
+textarea.name = 'w3review'
+textarea.rows = '20'
+textarea.cols = '98'
+form.appendChild(textarea)
+
 const macLetterKeys = macKeyCodes.filter(key => {
   return typeof key.keyName === 'string' && key.keyName.length === 1
 })
+
 function generateKeyboard (macLetterKeys) {
   const keyboardDiv = document.createElement('div')
   keyboardDiv.classList.add('keyboard')
@@ -98,5 +119,13 @@ function generateKeyboard (macLetterKeys) {
   return keyboardDiv
 }
 
+const p = document.createElement('p')
+p.classList.add('comment')
+p.textContent = 'Клавиатура создана в MacOS'
+
+document.body.appendChild(wrapper)
+wrapper.appendChild(h1)
+wrapper.appendChild(form)
 const macKeyboard = generateKeyboard(macKeyCodes)
-document.body.appendChild(macKeyboard)
+wrapper.appendChild(macKeyboard)
+wrapper.appendChild(p)
