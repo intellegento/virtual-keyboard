@@ -1,26 +1,167 @@
-keyboard {
+@font-face {
+    font-family: "SanFrancisco"; 
+    src: url("../font/SF-Pro-Display-Medium.woff") format("truetype"); 
+    font-style: normal; 
+    font-weight: normal; 
+    } 
+.keyboard {
     display: inline-block;
     box-sizing: border-box;
-    border: 1px solid black;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    background-color: lightgray;
     padding: 5px;
 }
 
 .key-row {
-    display: block;
+    display: flex;
     margin-bottom: 2px;
+    width: auto;
+    position: relative;
 }
 
 .key {
+    font-family: "SanFrancisco";
     display: inline-block;
     box-sizing: border-box;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
     text-align: center;
-    border: 1px solid black;
-    margin: 2px;
-    font-size: 20px;
+    border-radius: 5px;
+    margin: 2px 3px;
+    font-size: 18px;
+    background-color: #111111;
+    color: #fff;
     font-weight: bold;
     user-select: none;
+    box-shadow: 2px 2px #fff;
+    transition: all .3s;
     cursor: pointer;
+}
+
+.key:hover {
+    box-shadow: -2px -2px #fff;
+}
+
+.key:hover span {
+    text-shadow: 1px 1px 2px #fff;
+}
+
+.delete,
+.tab,
+.capslock,
+.shift,
+.return,
+.fn,
+.control,
+.option,
+.command,
+.space {
+    font-size: 14px;
+    padding: 5px;
+    line-height: 40px; 
+}
+
+.delete {
+    width: 83px;
+    text-align: right;
+}
+
+.return {
+    width: 90px;
+    text-align: right;
+}
+
+.tab {
+    width: 83px;
+    text-align: left;
+}
+
+.capslock {
+    width: 100px;
+    text-align: left;
+}
+
+.shift {
+    width: 123px;
+    text-align: left;
+}
+
+.shift:last-child {
+    text-align: right;
+}
+
+.command {
+    width: 68px;
+}
+
+.space {
+    width: 273px;
+}
+
+.arrowleft,
+.arrowright,
+.arrowup,
+.arrowdown {
+    position: relative;
+    line-height: 0;
+}
+
+.arrowleft span,
+.arrowright span,
+.arrowup span,
+.arrowdown span,
+.space span {
+    display: none;
+}
+.arrowup {
+    top: 0;
+    height: 24px;
+    line-height: 0;
+    border-radius: 5px 5px 0 0;
+}
+
+.arrowup:after {
+    position: absolute;
+    left: 50%;
+    content: "▼";
+    width: 10px;
+    height: 10px;
+    rotate: 180deg;
+
+}
+
+.arrowdown {
+    border-radius: 0 0 5px 5px;
+    position: absolute;
+    bottom: 0;
+    right: 56px;
+    height: 24px;
+}
+
+.arrowdown:after {
+    position: absolute;
+    left: 40%;
+    content: "▼";
+    width: 10px;
+    height: 10px;
+    top: 13px;
+    right: 20px;
+}
+
+.arrowleft:after {
+    position: absolute;
+    content: "▼";
+    rotate: 90deg;
+    top: 50%;
+    left: calc(50% - 7px);
+}
+
+.arrowright:after {
+    position: absolute;
+    content: "▼";
+    rotate: -90deg;
+    top: 50%;
+    left: calc(50% - 5px);
 }
