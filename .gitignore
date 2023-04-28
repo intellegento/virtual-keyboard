@@ -1,0 +1,10 @@
+dist/
+build/
+node_modules
+
+# файлы
+.DS_Store
+.env
+*.log
+*.pid
+*.lock
