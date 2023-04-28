@@ -1300,7 +1300,17 @@ wrapper.appendChild(p)
 textarea.focus()
 const keys = document.querySelectorAll('.key')
 console.log(keys)
-keys.forEach(key => {
+
+const filteredKeys = [...keys].filter(key => {
+  const keyCodeAttr = key.getAttribute('data-key-code')
+  if (keyCodeAttr) {
+    const keyCode = parseInt(keyCodeAttr)
+    return macLetterKeys.some(key => key.keyCode === keyCode)
+  }
+  return false
+})
+
+filteredKeys.forEach(key => {
   key.addEventListener('click', (event) => {
     event.preventDefault()
     textarea.focus()
@@ -1314,6 +1324,7 @@ keys.forEach(key => {
     }
   })
 })
+
 
 
 document.addEventListener('keydown', (event) => {
