@@ -1176,7 +1176,7 @@ const macLetterKeys = macKeyCodes.filter((key) => {
   return typeof key.key === 'string' && key.key.length === 1
 })
 
-const macLetterKeysfunc = macKeyCodes.filter((key) => {
+const macFuncionalKey = macKeyCodes.filter((key) => {
   return typeof key.key === 'string' && key.key.length > 1
 })
 
@@ -1299,7 +1299,55 @@ wrapper.appendChild(macKeyboard)
 wrapper.appendChild(p)
 textarea.focus()
 const keys = document.querySelectorAll('.key')
-console.log(keys)
+
+const shiftKeys = {
+  en: {
+    1: '!',
+    2: '@',
+    3: '#',
+    4: '$',
+    5: '%',
+    6: '^',
+    7: '&',
+    8: '*',
+    9: '(',
+    0: ')',
+    '`': '~',
+    '-': '_',
+    '=': '+',
+    '[': '{',
+    ']': '}',
+    '\\': '|',
+    ';': ':',
+    '\'': '\"',
+    ',': '<',
+    '.': '>',
+    '/': '?'
+  },
+  ru: {
+    1: '!',
+    2: '\"',
+    3: '№',
+    4: ';',
+    5: '%',
+    6: ':',
+    7: '?',
+    8: '*',
+    9: '(',
+    0: ')',
+    '`': 'ё',
+    '-': '_',
+    '=': '+',
+    '[': 'х',
+    ']': 'ъ',
+    '\\': '/',
+    ';': 'ж',
+    '\'': 'э',
+    ',': 'б',
+    '.': 'ю',
+    '/': '.'
+  }
+}
 
 const filteredKeys = [...keys].filter(key => {
   const keyCodeAttr = key.getAttribute('data-key-code')
@@ -1309,6 +1357,16 @@ const filteredKeys = [...keys].filter(key => {
   }
   return false
 })
+
+const filteredFunctionalKeys = [...keys].filter(key => {
+  const keyCodeAttr = key.getAttribute('data-key-code')
+  if (keyCodeAttr) {
+    const keyCode = parseInt(keyCodeAttr)
+    return macFuncionalKey.some(key => key.keyCode === keyCode)
+  }
+  return false
+})
+console.log(filteredFunctionalKeys)
 
 filteredKeys.forEach(key => {
   key.addEventListener('click', (event) => {
@@ -1325,7 +1383,45 @@ filteredKeys.forEach(key => {
   })
 })
 
+filteredFunctionalKeys.forEach(key => {
+  key.addEventListener('click', (event) => {
+    event.preventDefault()
+    textarea.focus()
+    const keyCodeAttr = key.getAttribute('data-key-code')
+    if (keyCodeAttr) {
+      const keyCode = parseInt(keyCodeAttr)
+      const currentKey = macFuncionalKey.find(key => key.keyCode === keyCode)
+      const keyChar = currentKey[currentLanguage]
+      console.log(keyCode)
 
+      // Проверяем, является ли нажатая клавиша кнопкой "Delete"
+      if (keyCode === 8) { // проверяем, является ли нажатая клавиша клавишей "Backspace"
+        let startPos = textarea.selectionStart // получаем позицию курсора
+        const endPos = textarea.selectionEnd
+        if (startPos === endPos) { // если курсор находится на одной позиции
+          startPos-- // передвигаем его на одну позицию влево
+        }
+        textarea.value = textarea.value.slice(0, startPos) + textarea.value.slice(endPos) // удаляем символы в выбранной области
+        textarea.selectionStart = startPos // устанавливаем курсор на новую позицию
+        textarea.selectionEnd = startPos
+      }
+
+      if (keyCode === 9) { // проверяем, является ли нажатая клавиша клавишей "Tab"
+        event.preventDefault() // отменяем действие по умолчанию, чтобы не переключаться на следующий элемент формы
+        const startPos = textarea.selectionStart // получаем позицию курсора
+        const endPos = textarea.selectionEnd
+        textarea.value = textarea.value.slice(0, startPos) + '\t' + textarea.value.slice(endPos) // добавляем символ табуляции
+        textarea.selectionStart = startPos + 1 // устанавливаем курсор на новую позицию
+        textarea.selectionEnd = startPos + 1
+      }
+
+      if (keyCode === 13) { // проверяем, является ли нажатая клавиша клавишей "Enter"
+        event.preventDefault() // отменяем действие по умолчанию, чтобы не переключаться на следующий элемент формы
+        textarea.value += '\n' // добавляем символ новой строки
+      }
+    }
+  })
+})
 
 document.addEventListener('keydown', (event) => {
   const keyCode = event.keyCode
@@ -1334,6 +1430,16 @@ document.addEventListener('keydown', (event) => {
   if (key) {
     key.classList.add('active')
   }
+
+  if (event.keyCode === 16) { // 16 - код клавиши Shift
+    const language = currentLanguage === 'en' ? 'enShift' : 'ruShift'
+    macLetterKeys.forEach(key => {
+      const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+      if (element) {
+        element.textContent = key[language]
+      }
+    })
+  }
 })
 
 document.addEventListener('keyup', (event) => {
@@ -1341,5 +1447,15 @@ document.addEventListener('keyup', (event) => {
   const key = document.querySelector(`.key[data-key-code="${keyCode}"]`)
   if (key) {
     key.classList.remove('active')
+  }
+
+  if (event.keyCode === 16) { // 16 - код клавиши Shift
+    const language = currentLanguage === 'en' ? 'en' : 'ru'
+    macLetterKeys.forEach(key => {
+      const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+      if (element) {
+        element.textContent = key[language]
+      }
+    })
   }
 })
