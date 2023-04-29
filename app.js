@@ -1207,7 +1207,17 @@ function toggleLanguage () {
     const key = keyboardKeys[i]
     const keyCode = key.getAttribute('data-key-code')
     const keyObj = macLetterKeys.find((k) => k.keyCode === parseInt(keyCode))
-    const keyName = keyObj ? (currentLanguage === 'en' ? (keyObj.en || keyObj.key) : (keyObj.ru || keyObj.key)) : key.textContent
+    const isShiftPressed = event.shiftKey
+    let keyName = ''
+    if (keyObj) {
+      if (isShiftPressed) {
+        keyName = currentLanguage === 'en' ? keyObj.enShift || keyObj.keyShift : keyObj.ruShift || keyObj.keyShift
+      } else {
+        keyName = currentLanguage === 'en' ? keyObj.en || keyObj.key : keyObj.ru || keyObj.key
+      }
+    } else {
+      keyName = key.textContent
+    }
     key.querySelector('span').textContent = keyName
   }
 }
@@ -1300,55 +1310,6 @@ wrapper.appendChild(p)
 textarea.focus()
 const keys = document.querySelectorAll('.key')
 
-const shiftKeys = {
-  en: {
-    1: '!',
-    2: '@',
-    3: '#',
-    4: '$',
-    5: '%',
-    6: '^',
-    7: '&',
-    8: '*',
-    9: '(',
-    0: ')',
-    '`': '~',
-    '-': '_',
-    '=': '+',
-    '[': '{',
-    ']': '}',
-    '\\': '|',
-    ';': ':',
-    '\'': '\"',
-    ',': '<',
-    '.': '>',
-    '/': '?'
-  },
-  ru: {
-    1: '!',
-    2: '\"',
-    3: '№',
-    4: ';',
-    5: '%',
-    6: ':',
-    7: '?',
-    8: '*',
-    9: '(',
-    0: ')',
-    '`': 'ё',
-    '-': '_',
-    '=': '+',
-    '[': 'х',
-    ']': 'ъ',
-    '\\': '/',
-    ';': 'ж',
-    '\'': 'э',
-    ',': 'б',
-    '.': 'ю',
-    '/': '.'
-  }
-}
-
 const filteredKeys = [...keys].filter(key => {
   const keyCodeAttr = key.getAttribute('data-key-code')
   if (keyCodeAttr) {
@@ -1418,6 +1379,58 @@ filteredFunctionalKeys.forEach(key => {
       if (keyCode === 13) { // проверяем, является ли нажатая клавиша клавишей "Enter"
         event.preventDefault() // отменяем действие по умолчанию, чтобы не переключаться на следующий элемент формы
         textarea.value += '\n' // добавляем символ новой строки
+      }
+      if (keyCode === 32) {
+        // Space
+        textarea.value += ' '
+      }
+      if (keyCode === 37) { // Left Arrow
+        const cursorPosition = textarea.selectionStart
+        if (cursorPosition > 0) {
+          textarea.selectionStart = cursorPosition - 1
+          textarea.selectionEnd = cursorPosition - 1
+        }
+      }
+      if (keyCode === 38) { // Up Arrow
+        const cursorPosition = textarea.selectionStart
+        const currentLine = textarea.value.substr(0, cursorPosition).split('\n').length - 1
+        const currentLineStart = textarea.value.lastIndexOf('\n', cursorPosition - 1) + 1
+        const currentLineEnd = textarea.value.indexOf('\n', cursorPosition)
+        const previousLineStart = textarea.value.lastIndexOf('\n', currentLineStart - 2) + 1
+        const previousLineEnd = textarea.value.indexOf('\n', currentLineStart - 1)
+        if (currentLine > 0) {
+          if (previousLineEnd === -1) {
+            textarea.selectionStart = previousLineStart
+            textarea.selectionEnd = previousLineStart
+          } else {
+            const offset = Math.min(cursorPosition - currentLineStart, previousLineEnd - previousLineStart)
+            textarea.selectionStart = previousLineStart + offset
+            textarea.selectionEnd = previousLineStart + offset
+          }
+        }
+      }
+      if (keyCode === 39) { // Right Arrow
+        const cursorPosition = textarea.selectionStart
+        if (cursorPosition < textarea.value.length) {
+          textarea.selectionStart = cursorPosition + 1
+          textarea.selectionEnd = cursorPosition + 1
+        }
+      }
+      if (keyCode === 40) { // код клавиши Down Arrow
+        const cursorPosition = textarea.selectionStart
+        const text = textarea.value
+        const lineIndex = text.substr(0, cursorPosition).split("\n").length - 1 // определяем индекс текущей строки
+        const nextLineStartPosition = text.indexOf("\n", cursorPosition) + 1 // определяем позицию начала следующей строки
+        const nextLineEndPosition = text.indexOf("\n", nextLineStartPosition) // определяем позицию конца следующей строки
+      
+        if (nextLineEndPosition === -1) { // если это последняя строка
+          textarea.selectionStart = text.length // устанавливаем курсор в конец текста
+          textarea.selectionEnd = text.length
+        } else { // иначе переносим курсор на следующую строку
+          const newCursorPosition = nextLineStartPosition + (cursorPosition - nextLineEndPosition - 1)
+          textarea.selectionStart = newCursorPosition
+          textarea.selectionEnd = newCursorPosition
+        }
       }
     }
   })
