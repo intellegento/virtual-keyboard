@@ -207,3 +207,9 @@
     top: 50%;
     left: calc(50% - 5px);
 }
+
+.comment {
+    white-space: pre-wrap;
+    margin: 0;
+    text-align: center;
+  }

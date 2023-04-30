@@ -1299,7 +1299,7 @@ function generateKeyboard (macLetterKeys) {
 
 const p = document.createElement('p')
 p.classList.add('comment')
-p.textContent = 'Клавиатура создана в MacOS. Для переключения языка: Нажмите control + space, после чего control должен остаться активным, после чего необходимо повторно нажать space'
+p.innerHTML = 'Клавиатура создана в <strong>MacOS</strong>. <br>Для переключения языка: Нажмите <strong>control + space</strong>, <br>после чего <strong>control</strong> должен остаться активным, после чего необходимо повторно нажать <strong>space</strong>';
 
 document.body.appendChild(wrapper)
 wrapper.appendChild(h1)
