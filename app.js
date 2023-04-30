@@ -1355,43 +1355,41 @@ filteredFunctionalKeys.forEach(key => {
       const keyChar = currentKey[currentLanguage]
       console.log(keyCode)
 
-      // Проверяем, является ли нажатая клавиша кнопкой "Delete"
-      if (keyCode === 8) { // проверяем, является ли нажатая клавиша клавишей "Backspace"
-        let startPos = textarea.selectionStart // получаем позицию курсора
+      if (keyCode === 8) {
+        let startPos = textarea.selectionStart
         const endPos = textarea.selectionEnd
-        if (startPos === endPos) { // если курсор находится на одной позиции
-          startPos-- // передвигаем его на одну позицию влево
+        if (startPos === endPos) {
+          startPos--
         }
-        textarea.value = textarea.value.slice(0, startPos) + textarea.value.slice(endPos) // удаляем символы в выбранной области
-        textarea.selectionStart = startPos // устанавливаем курсор на новую позицию
+        textarea.value = textarea.value.slice(0, startPos) + textarea.value.slice(endPos)
+        textarea.selectionStart = startPos
         textarea.selectionEnd = startPos
       }
 
-      if (keyCode === 9) { // проверяем, является ли нажатая клавиша клавишей "Tab"
-        event.preventDefault() // отменяем действие по умолчанию, чтобы не переключаться на следующий элемент формы
-        const startPos = textarea.selectionStart // получаем позицию курсора
+      if (keyCode === 9) {
+        event.preventDefault()
+        const startPos = textarea.selectionStart
         const endPos = textarea.selectionEnd
-        textarea.value = textarea.value.slice(0, startPos) + '\t' + textarea.value.slice(endPos) // добавляем символ табуляции
-        textarea.selectionStart = startPos + 1 // устанавливаем курсор на новую позицию
+        textarea.value = textarea.value.slice(0, startPos) + '\t' + textarea.value.slice(endPos)
+        textarea.selectionStart = startPos + 1
         textarea.selectionEnd = startPos + 1
       }
 
-      if (keyCode === 13) { // проверяем, является ли нажатая клавиша клавишей "Enter"
-        event.preventDefault() // отменяем действие по умолчанию, чтобы не переключаться на следующий элемент формы
-        textarea.value += '\n' // добавляем символ новой строки
+      if (keyCode === 13) {
+        event.preventDefault()
+        textarea.value += '\n'
       }
       if (keyCode === 32) {
-        // Space
         textarea.value += ' '
       }
-      if (keyCode === 37) { // Left Arrow
+      if (keyCode === 37) {
         const cursorPosition = textarea.selectionStart
         if (cursorPosition > 0) {
           textarea.selectionStart = cursorPosition - 1
           textarea.selectionEnd = cursorPosition - 1
         }
       }
-      if (keyCode === 38) { // Up Arrow
+      if (keyCode === 38) {
         const cursorPosition = textarea.selectionStart
         const currentLine = textarea.value.substr(0, cursorPosition).split('\n').length - 1
         const currentLineStart = textarea.value.lastIndexOf('\n', cursorPosition - 1) + 1
@@ -1409,29 +1407,51 @@ filteredFunctionalKeys.forEach(key => {
           }
         }
       }
-      if (keyCode === 39) { // Right Arrow
+      if (keyCode === 39) {
         const cursorPosition = textarea.selectionStart
         if (cursorPosition < textarea.value.length) {
           textarea.selectionStart = cursorPosition + 1
           textarea.selectionEnd = cursorPosition + 1
         }
       }
-      if (keyCode === 40) { // код клавиши Down Arrow
+      if (keyCode === 40) {
         const cursorPosition = textarea.selectionStart
         const text = textarea.value
-        const lineIndex = text.substr(0, cursorPosition).split("\n").length - 1 // определяем индекс текущей строки
-        const nextLineStartPosition = text.indexOf("\n", cursorPosition) + 1 // определяем позицию начала следующей строки
-        const nextLineEndPosition = text.indexOf("\n", nextLineStartPosition) // определяем позицию конца следующей строки
+        const lineIndex = text.substr(0, cursorPosition).split("\n").length - 1
+        const nextLineStartPosition = text.indexOf("\n", cursorPosition) + 1
+        const nextLineEndPosition = text.indexOf("\n", nextLineStartPosition)
       
-        if (nextLineEndPosition === -1) { // если это последняя строка
-          textarea.selectionStart = text.length // устанавливаем курсор в конец текста
+        if (nextLineEndPosition === -1) {
+          textarea.selectionStart = text.length
           textarea.selectionEnd = text.length
-        } else { // иначе переносим курсор на следующую строку
+        } else {
           const newCursorPosition = nextLineStartPosition + (cursorPosition - nextLineEndPosition - 1)
           textarea.selectionStart = newCursorPosition
           textarea.selectionEnd = newCursorPosition
         }
       }
+    }
+  })
+})
+
+const shiftKey = document.querySelector('.key[data-key-code="16"]')
+
+shiftKey.addEventListener('mousedown', () => {
+  const language = currentLanguage === 'en' ? 'enShift' : 'ruShift'
+  macLetterKeys.forEach(key => {
+    const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+    if (element) {
+      element.textContent = key[language]
+    }
+  })
+})
+
+shiftKey.addEventListener('mouseup', () => {
+  const language = currentLanguage === 'en' ? 'en' : 'ru'
+  macLetterKeys.forEach(key => {
+    const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+    if (element) {
+      element.textContent = key[language]
     }
   })
 })
@@ -1444,7 +1464,7 @@ document.addEventListener('keydown', (event) => {
     key.classList.add('active')
   }
 
-  if (event.keyCode === 16) { // 16 - код клавиши Shift
+  if (event.keyCode === 16) {
     const language = currentLanguage === 'en' ? 'enShift' : 'ruShift'
     macLetterKeys.forEach(key => {
       const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
@@ -1462,7 +1482,7 @@ document.addEventListener('keyup', (event) => {
     key.classList.remove('active')
   }
 
-  if (event.keyCode === 16) { // 16 - код клавиши Shift
+  if (event.keyCode === 16) {
     const language = currentLanguage === 'en' ? 'en' : 'ru'
     macLetterKeys.forEach(key => {
       const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
