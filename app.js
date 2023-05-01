@@ -1168,6 +1168,7 @@ const textarea = document.createElement('textarea')
 textarea.rows = '15'
 textarea.cols = '72'
 form.appendChild(textarea)
+const currentContent = textarea.value
 
 let currentLanguage = localStorage.getItem('language') || 'en'
 let isControlPressed = false
@@ -1190,7 +1191,6 @@ function toggleLanguage () {
   localStorage.setItem('language', currentLanguage)
   console.log(currentLanguage)
 
-  // Обновляем содержимое каждой кнопки клавиатуры в соответствии с новым языком
   const keyboardKeys = document.querySelectorAll('.keyboard .key')
   for (let i = 0; i < keyboardKeys.length; i++) {
     const key = keyboardKeys[i]
@@ -1204,14 +1204,11 @@ function toggleLanguage () {
       } else {
         keyName = currentLanguage === 'en' ? keyObj.en || keyObj.key : keyObj.ru || keyObj.key
       }
-      // Проверяем, есть ли у клавиши класс "ru"
       if (key.classList.contains('ru')) {
-      // Если язык английский, удаляем класс "ru", иначе оставляем его
         if (currentLanguage === 'en') {
           key.classList.remove('ru')
         }
       } else {
-      // Если язык русский, добавляем класс "ru", иначе оставляем его
         if (currentLanguage === 'ru') {
           key.classList.add('ru')
         }
@@ -1225,17 +1222,16 @@ function toggleLanguage () {
     }
   }
 
-  // Получаем все текстовые поля на странице
   const inputFields = document.querySelectorAll('input[type="text"], textarea')
   for (let i = 0; i < inputFields.length; i++) {
     const inputField = inputFields[i]
-    // Меняем содержимое текстовых полей в соответствии с новым языком
     if (currentLanguage === 'ru' && inputField.dataset.ru) {
       inputField.value = inputField.dataset.ru
     } else {
       inputField.value = inputField.dataset.en
     }
   }
+  textarea.value = currentContent
 }
 
 if (localStorage.getItem('language')) {
@@ -1249,10 +1245,8 @@ function generateKeyboard (macLetterKeys) {
 
   document.addEventListener('keydown', (event) => {
     if (event.code === 'ControlLeft' && !event.repeat) {
-      // сохраняем информацию о нажатой клавише Control
       isControlPressed = true
     } else if (event.code === 'Space' && isControlPressed) {
-      // меняем язык клавиатуры при нажатии Control + Space
       toggleLanguage()
       event.preventDefault()
     }
@@ -1308,7 +1302,6 @@ function generateKeyboard (macLetterKeys) {
       }
       const keyCode = target.getAttribute('data-key-code')
       const key = macLetterKeys.find((k) => k.keyCode === parseInt(keyCode))
-      console.log(key, 'key')
       const symbol = isCapsOn() ? shiftKeyName : keyName
       insertText(symbol)
     })
@@ -1319,7 +1312,7 @@ function generateKeyboard (macLetterKeys) {
 
 const p = document.createElement('p')
 p.classList.add('comment')
-p.innerHTML = 'Клавиатура создана в <strong>MacOS</strong>. <br>Для переключения языка: Нажмите <strong>control + space</strong>, <br>после чего <strong>control</strong> должен остаться активным, после чего необходимо повторно нажать <strong>space</strong>'
+p.innerHTML = 'Клавиатура создана в <strong>macOS</strong>. <br>Для переключения языка: Нажмите <strong>control + space</strong>, <br>после чего <strong>control</strong> должен остаться активным, после чего необходимо повторно нажать <strong>space</strong> <br> <strong>ВАЖНО!!!</strong>есть бага с разметкой клавиатуры, <br>после использования кнопки Shift, а затем попвтке смены раскладки меняеятся язык ввода, <br>но сама раскладка остается неизменной, но если нажимать каждый раз после смены раскладки Shift повторно, то раскладка меняется<br>для проверки смены языка ввода в консоль выводится актальный язык'
 
 document.body.appendChild(wrapper)
 wrapper.appendChild(h1)
@@ -1347,7 +1340,6 @@ const filteredFunctionalKeys = [...keys].filter(key => {
   }
   return false
 })
-console.log(filteredFunctionalKeys)
 
 filteredKeys.forEach(key => {
   key.addEventListener('click', (event) => {
@@ -1358,7 +1350,6 @@ filteredKeys.forEach(key => {
       const keyCode = parseInt(keyCodeAttr)
       const currentKey = macLetterKeys.find(key => key.keyCode === keyCode)
       const keyChar = currentKey[currentLanguage]
-      console.log(keyCode)
       textarea.value += keyChar
     }
   })
@@ -1373,7 +1364,6 @@ filteredFunctionalKeys.forEach(key => {
       const keyCode = parseInt(keyCodeAttr)
       const currentKey = macFuncionalKey.find(key => key.keyCode === keyCode)
       const keyChar = currentKey[currentLanguage]
-      console.log(keyCode)
 
       if (keyCode === 8) {
         let startPos = textarea.selectionStart
