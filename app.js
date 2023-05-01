@@ -1169,7 +1169,7 @@ textarea.rows = '15'
 textarea.cols = '72'
 form.appendChild(textarea)
 
-let currentLanguage = 'en'
+let currentLanguage = localStorage.getItem('language') || 'en'
 let isControlPressed = false
 
 const macLetterKeys = macKeyCodes.filter((key) => {
@@ -1187,19 +1187,8 @@ function isCapsOn () {
 
 function toggleLanguage () {
   currentLanguage = currentLanguage === 'en' ? 'ru' : 'en'
+  localStorage.setItem('language', currentLanguage)
   console.log(currentLanguage)
-
-  // Получаем все текстовые поля на странице
-  const inputFields = document.querySelectorAll('input[type="text"], textarea')
-  for (let i = 0; i < inputFields.length; i++) {
-    const inputField = inputFields[i]
-    // Меняем содержимое текстовых полей в соответствии с новым языком
-    if (currentLanguage === 'ru' && inputField.dataset.ru) {
-      inputField.value = inputField.dataset.ru
-    } else {
-      inputField.value = inputField.dataset.en
-    }
-  }
 
   // Обновляем содержимое каждой кнопки клавиатуры в соответствии с новым языком
   const keyboardKeys = document.querySelectorAll('.keyboard .key')
@@ -1215,11 +1204,42 @@ function toggleLanguage () {
       } else {
         keyName = currentLanguage === 'en' ? keyObj.en || keyObj.key : keyObj.ru || keyObj.key
       }
+      // Проверяем, есть ли у клавиши класс "ru"
+      if (key.classList.contains('ru')) {
+      // Если язык английский, удаляем класс "ru", иначе оставляем его
+        if (currentLanguage === 'en') {
+          key.classList.remove('ru')
+        }
+      } else {
+      // Если язык русский, добавляем класс "ru", иначе оставляем его
+        if (currentLanguage === 'ru') {
+          key.classList.add('ru')
+        }
+      }
     } else {
       keyName = key.textContent
     }
-    key.querySelector('span').textContent = keyName
+    const span = key.querySelector('span')
+    if (span) {
+      span.textContent = keyName
+    }
   }
+
+  // Получаем все текстовые поля на странице
+  const inputFields = document.querySelectorAll('input[type="text"], textarea')
+  for (let i = 0; i < inputFields.length; i++) {
+    const inputField = inputFields[i]
+    // Меняем содержимое текстовых полей в соответствии с новым языком
+    if (currentLanguage === 'ru' && inputField.dataset.ru) {
+      inputField.value = inputField.dataset.ru
+    } else {
+      inputField.value = inputField.dataset.en
+    }
+  }
+}
+
+if (localStorage.getItem('language')) {
+  currentLanguage = localStorage.getItem('language')
 }
 
 function generateKeyboard (macLetterKeys) {
@@ -1299,7 +1319,7 @@ function generateKeyboard (macLetterKeys) {
 
 const p = document.createElement('p')
 p.classList.add('comment')
-p.innerHTML = 'Клавиатура создана в <strong>MacOS</strong>. <br>Для переключения языка: Нажмите <strong>control + space</strong>, <br>после чего <strong>control</strong> должен остаться активным, после чего необходимо повторно нажать <strong>space</strong>';
+p.innerHTML = 'Клавиатура создана в <strong>MacOS</strong>. <br>Для переключения языка: Нажмите <strong>control + space</strong>, <br>после чего <strong>control</strong> должен остаться активным, после чего необходимо повторно нажать <strong>space</strong>'
 
 document.body.appendChild(wrapper)
 wrapper.appendChild(h1)
@@ -1417,10 +1437,10 @@ filteredFunctionalKeys.forEach(key => {
       if (keyCode === 40) {
         const cursorPosition = textarea.selectionStart
         const text = textarea.value
-        const lineIndex = text.substr(0, cursorPosition).split("\n").length - 1
-        const nextLineStartPosition = text.indexOf("\n", cursorPosition) + 1
-        const nextLineEndPosition = text.indexOf("\n", nextLineStartPosition)
-      
+        const lineIndex = text.substr(0, cursorPosition).split('\n').length - 1
+        const nextLineStartPosition = text.indexOf('\n', cursorPosition) + 1
+        const nextLineEndPosition = text.indexOf('\n', nextLineStartPosition)
+
         if (nextLineEndPosition === -1) {
           textarea.selectionStart = text.length
           textarea.selectionEnd = text.length
@@ -1441,7 +1461,7 @@ shiftKey.addEventListener('mousedown', () => {
   macLetterKeys.forEach(key => {
     const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
     if (element) {
-      element.textContent = key[language]
+      element.innerHTML = key[language]
     }
   })
 })
