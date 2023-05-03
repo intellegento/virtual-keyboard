@@ -1,3 +1,6 @@
+/* eslint-disable no-shadow */
+/* eslint-disable radix */
+/* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
 const macKeyCodes = [
   {
     key: '`',
@@ -1150,355 +1153,365 @@ const macKeyCodes = [
     languageKeyNeeded: false,
     repeat: false
   }
-]
+];
 
-const wrapper = document.createElement('section')
-wrapper.classList.add('wrapper')
+const wrapper = document.createElement('section');
+wrapper.classList.add('wrapper');
 
-const h1 = document.createElement('h1')
-h1.classList.add('title')
-h1.textContent = 'RSS Virtual Keyboard'
+const h1 = document.createElement('h1');
+h1.classList.add('title');
+h1.textContent = 'RSS Virtual Keyboard';
 
-const form = document.createElement('form')
-form.classList.add('form')
-form.action = ''
-form.method = 'post'
+const form = document.createElement('form');
+form.classList.add('form');
+form.action = '';
+form.method = 'post';
 
-const textarea = document.createElement('textarea')
-textarea.rows = '15'
-textarea.cols = '72'
-form.appendChild(textarea)
-const currentContent = textarea.value
+const textarea = document.createElement('textarea');
+textarea.rows = '15';
+textarea.cols = '72';
+form.appendChild(textarea);
+const currentContent = textarea.value;
 
-let currentLanguage = localStorage.getItem('language') || 'en'
-let isControlPressed = false
+let currentLanguage = localStorage.getItem('language') || 'en';
+let isControlPressed = false;
 
 const macLetterKeys = macKeyCodes.filter((key) => {
-  return typeof key.key === 'string' && key.key.length === 1
-})
+  return typeof key.key === 'string' && key.key.length === 1;
+});
 
 const macFuncionalKey = macKeyCodes.filter((key) => {
-  return typeof key.key === 'string' && key.key.length > 1
-})
+  return typeof key.key === 'string' && key.key.length > 1;
+});
 
-function isCapsOn () {
-  const capsLockEnabled = window.getComputedStyle(document.querySelector('.keyboard'))['text-transform'] === 'uppercase'
-  return capsLockEnabled
+function isCapsOn() {
+  const capsLockEnabled = window.getComputedStyle(document.querySelector('.keyboard'))['text-transform'] === 'uppercase';
+  return capsLockEnabled;
 }
 
-function toggleLanguage () {
-  currentLanguage = currentLanguage === 'en' ? 'ru' : 'en'
-  localStorage.setItem('language', currentLanguage)
-  console.log(currentLanguage)
+function toggleLanguage() {
+  currentLanguage = currentLanguage === 'en' ? 'ru' : 'en';
+  localStorage.setItem('language', currentLanguage);
+  // eslint-disable-next-line no-console
+  console.log(currentLanguage);
 
-  const keyboardKeys = document.querySelectorAll('.keyboard .key')
+  const keyboardKeys = document.querySelectorAll('.keyboard .key');
+  // eslint-disable-next-line no-plusplus
   for (let i = 0; i < keyboardKeys.length; i++) {
-    const key = keyboardKeys[i]
-    const keyCode = key.getAttribute('data-key-code')
-    const keyObj = macLetterKeys.find((k) => k.keyCode === parseInt(keyCode))
-    const isShiftPressed = event.shiftKey
-    let keyName = ''
+    const key = keyboardKeys[i];
+    const keyCode = key.getAttribute('data-key-code');
+    const keyObj = macLetterKeys.find((k) => k.keyCode === parseInt(keyCode));
+    // eslint-disable-next-line no-restricted-globals
+    const isShiftPressed = event.shiftKey;
+    let keyName = '';
     if (keyObj) {
       if (isShiftPressed) {
-        keyName = currentLanguage === 'en' ? keyObj.enShift || keyObj.keyShift : keyObj.ruShift || keyObj.keyShift
+        keyName = currentLanguage === 'en' ? keyObj.enShift || keyObj.keyShift : keyObj.ruShift || keyObj.keyShift;
       } else {
-        keyName = currentLanguage === 'en' ? keyObj.en || keyObj.key : keyObj.ru || keyObj.key
+        keyName = currentLanguage === 'en' ? keyObj.en || keyObj.key : keyObj.ru || keyObj.key;
       }
       if (key.classList.contains('ru')) {
         if (currentLanguage === 'en') {
-          key.classList.remove('ru')
+          key.classList.remove('ru');
         }
-      } else {
-        if (currentLanguage === 'ru') {
-          key.classList.add('ru')
-        }
+      } else if (currentLanguage === 'ru') {
+        key.classList.add('ru');
       }
     } else {
-      keyName = key.textContent
+      keyName = key.textContent;
     }
-    const span = key.querySelector('span')
+    const span = key.querySelector('span');
     if (span) {
-      span.textContent = keyName
+      span.textContent = keyName;
     }
   }
 
-  const inputFields = document.querySelectorAll('input[type="text"], textarea')
+  const inputFields = document.querySelectorAll('input[type="text"], textarea');
   for (let i = 0; i < inputFields.length; i++) {
-    const inputField = inputFields[i]
+    const inputField = inputFields[i];
     if (currentLanguage === 'ru' && inputField.dataset.ru) {
-      inputField.value = inputField.dataset.ru
+      inputField.value = inputField.dataset.ru;
     } else {
-      inputField.value = inputField.dataset.en
+      inputField.value = inputField.dataset.en;
     }
   }
-  textarea.value = currentContent
+  textarea.value = currentContent;
 }
 
 if (localStorage.getItem('language')) {
-  currentLanguage = localStorage.getItem('language')
+  currentLanguage = localStorage.getItem('language');
 }
 
-function generateKeyboard (macLetterKeys) {
-  const keyboardDiv = document.createElement('div')
-  keyboardDiv.classList.add('keyboard')
-  let currentRowDiv = null
+function generateKeyboard(macLetterKeys) {
+  const keyboardDiv = document.createElement('div');
+  keyboardDiv.classList.add('keyboard');
+  let currentRowDiv = null;
 
   document.addEventListener('keydown', (event) => {
     if (event.code === 'ControlLeft' && !event.repeat) {
-      isControlPressed = true
+      isControlPressed = true;
     } else if (event.code === 'Space' && isControlPressed) {
-      toggleLanguage()
-      event.preventDefault()
+      toggleLanguage();
+      event.preventDefault();
     }
-  })
+  });
 
   document.addEventListener('keyup', (event) => {
     if (event.code === 'ControlLeft') {
-      isControlPressed = false
+      isControlPressed = false;
     }
-  })
+  });
 
   for (let i = 0; i < macLetterKeys.length; i++) {
-    const keyCode = macLetterKeys[i].keyCode
-    const keyName = currentLanguage === 'en' ? macLetterKeys[i].en : macLetterKeys[i].ru
-    const code = macLetterKeys[i].code
-    const shiftKeyName = currentLanguage === 'en' ? macLetterKeys[i].enShift : macLetterKeys[i].ruShift
+    const keyCode = macLetterKeys[i].keyCode;
+    const keyName = currentLanguage === 'en' ? macLetterKeys[i].en : macLetterKeys[i].ru;
+    const code = macLetterKeys[i].code;
+    const shiftKeyName = currentLanguage === 'en' ? macLetterKeys[i].enShift : macLetterKeys[i].ruShift;
 
     if (
-      i === 0 ||
-        code === 'Backquote' ||
-        code === 'tab' ||
-        code === 'capslock' ||
-        code === 'shiftLeft' ||
-        code === 'fn'
+      i === 0
+        || code === 'Backquote'
+        || code === 'tab'
+        || code === 'capslock'
+        || code === 'shiftLeft'
+        || code === 'fn'
     ) {
-      currentRowDiv = document.createElement('div')
-      currentRowDiv.classList.add('key-row')
-      keyboardDiv.appendChild(currentRowDiv)
+      currentRowDiv = document.createElement('div');
+      currentRowDiv.classList.add('key-row');
+      keyboardDiv.appendChild(currentRowDiv);
     }
 
-    const keyDiv = document.createElement('div')
-    keyDiv.classList.add('key')
-    keyDiv.classList.add(code)
-    keyDiv.setAttribute('data-key-code', keyCode)
-    keyDiv.innerHTML = `<span>${keyName}</span>`
-    currentRowDiv.appendChild(keyDiv)
+    const keyDiv = document.createElement('div');
+    keyDiv.classList.add('key');
+    keyDiv.classList.add(code);
+    keyDiv.setAttribute('data-key-code', keyCode);
+    keyDiv.innerHTML = `<span>${keyName}</span>`;
+    currentRowDiv.appendChild(keyDiv);
 
-    function insertText (text) {
-      const input = document.activeElement
+    // eslint-disable-next-line no-inner-declarations
+    function insertText(text) {
+      const input = document.activeElement;
       if (!input || !('selectionStart' in input)) {
-        return
+        return;
       }
-      const startPos = input.selectionStart
-      const endPos = input.selectionEnd
-      const currentValue = input.value
-      input.value = `${currentValue.substring(0, startPos)}${text}${currentValue.substring(endPos)}`
-      input.selectionStart = input.selectionEnd = startPos + text.length
+      const startPos = input.selectionStart;
+      const endPos = input.selectionEnd;
+      const currentValue = input.value;
+      input.value = `${currentValue.substring(0, startPos)}${text}${currentValue.substring(endPos)}`;
+      // eslint-disable-next-line no-multi-assign
+      input.selectionStart = input.selectionEnd = startPos + text.length;
     }
     keyDiv.addEventListener('click', (event) => {
-      const target = event.target.closest('.key')
+      const target = event.target.closest('.key');
       if (!target) {
-        return
+        return;
       }
-      const keyCode = target.getAttribute('data-key-code')
-      const key = macLetterKeys.find((k) => k.keyCode === parseInt(keyCode))
-      const symbol = isCapsOn() ? shiftKeyName : keyName
-      insertText(symbol)
-    })
+      const keyCode = target.getAttribute('data-key-code');
+      // eslint-disable-next-line no-unused-vars
+      const key = macLetterKeys.find((k) => k.keyCode === parseInt(keyCode));
+      const symbol = isCapsOn() ? shiftKeyName : keyName;
+      insertText(symbol);
+    });
   }
 
-  return keyboardDiv
+  return keyboardDiv;
 }
 
-const p = document.createElement('p')
-p.classList.add('comment')
-p.innerHTML = 'Клавиатура создана в <strong>macOS</strong>. <br>Для переключения языка: Нажмите <strong>control + space</strong>, <br>после чего <strong>control</strong> должен остаться активным, после чего необходимо повторно нажать <strong>space</strong> <br> <strong>ВАЖНО!!!</strong>есть бага с разметкой клавиатуры, <br>после использования кнопки Shift, а затем попвтке смены раскладки меняеятся язык ввода, <br>но сама раскладка остается неизменной, но если нажимать каждый раз после смены раскладки Shift повторно, то раскладка меняется<br>для проверки смены языка ввода в консоль выводится актальный язык'
+const p = document.createElement('p');
+p.classList.add('comment');
+p.innerHTML = 'Клавиатура создана в <strong>macOS</strong>. <br>Для переключения языка: Нажмите <strong>control + space</strong>, <br>после чего <strong>control</strong> должен остаться активным, после чего необходимо повторно нажать <strong>space</strong> <br> <strong>ВАЖНО!!!</strong>есть бага с разметкой клавиатуры, <br>после использования кнопки Shift, а затем попвтке смены раскладки меняеятся язык ввода, <br>но сама раскладка остается неизменной, но если нажимать каждый раз после смены раскладки Shift повторно, то раскладка меняется<br>для проверки смены языка ввода в консоль выводится актальный язык';
 
-document.body.appendChild(wrapper)
-wrapper.appendChild(h1)
-wrapper.appendChild(form)
-const macKeyboard = generateKeyboard(macKeyCodes)
-wrapper.appendChild(macKeyboard)
-wrapper.appendChild(p)
-textarea.focus()
-const keys = document.querySelectorAll('.key')
+document.body.appendChild(wrapper);
+wrapper.appendChild(h1);
+wrapper.appendChild(form);
+const macKeyboard = generateKeyboard(macKeyCodes);
+wrapper.appendChild(macKeyboard);
+wrapper.appendChild(p);
+textarea.focus();
+const keys = document.querySelectorAll('.key');
 
 const filteredKeys = [...keys].filter(key => {
-  const keyCodeAttr = key.getAttribute('data-key-code')
+  const keyCodeAttr = key.getAttribute('data-key-code');
   if (keyCodeAttr) {
-    const keyCode = parseInt(keyCodeAttr)
-    return macLetterKeys.some(key => key.keyCode === keyCode)
+    const keyCode = parseInt(keyCodeAttr);
+    return macLetterKeys.some(key => key.keyCode === keyCode);
   }
-  return false
-})
+  return false;
+});
 
 const filteredFunctionalKeys = [...keys].filter(key => {
-  const keyCodeAttr = key.getAttribute('data-key-code')
+  const keyCodeAttr = key.getAttribute('data-key-code');
   if (keyCodeAttr) {
-    const keyCode = parseInt(keyCodeAttr)
-    return macFuncionalKey.some(key => key.keyCode === keyCode)
+    const keyCode = parseInt(keyCodeAttr);
+    return macFuncionalKey.some(key => key.keyCode === keyCode);
   }
-  return false
-})
+  return false;
+});
 
 filteredKeys.forEach(key => {
   key.addEventListener('click', (event) => {
-    event.preventDefault()
-    textarea.focus()
-    const keyCodeAttr = key.getAttribute('data-key-code')
+    event.preventDefault();
+    textarea.focus();
+    const keyCodeAttr = key.getAttribute('data-key-code');
     if (keyCodeAttr) {
-      const keyCode = parseInt(keyCodeAttr)
-      const currentKey = macLetterKeys.find(key => key.keyCode === keyCode)
-      const keyChar = currentKey[currentLanguage]
-      textarea.value += keyChar
+      const keyCode = parseInt(keyCodeAttr);
+      const currentKey = macLetterKeys.find(key => key.keyCode === keyCode);
+      const keyChar = currentKey[currentLanguage];
+      textarea.value += keyChar;
     }
-  })
-})
+  });
+});
 
 filteredFunctionalKeys.forEach(key => {
   key.addEventListener('click', (event) => {
-    event.preventDefault()
-    textarea.focus()
-    const keyCodeAttr = key.getAttribute('data-key-code')
+    event.preventDefault();
+    textarea.focus();
+    const keyCodeAttr = key.getAttribute('data-key-code');
     if (keyCodeAttr) {
-      const keyCode = parseInt(keyCodeAttr)
-      const currentKey = macFuncionalKey.find(key => key.keyCode === keyCode)
-      const keyChar = currentKey[currentLanguage]
+      const keyCode = parseInt(keyCodeAttr);
+      const currentKey = macFuncionalKey.find(key => key.keyCode === keyCode);
+      // eslint-disable-next-line no-unused-vars
+      const keyChar = currentKey[currentLanguage];
 
       if (keyCode === 8) {
-        let startPos = textarea.selectionStart
-        const endPos = textarea.selectionEnd
+        let startPos = textarea.selectionStart;
+        const endPos = textarea.selectionEnd;
         if (startPos === endPos) {
-          startPos--
+          // eslint-disable-next-line no-plusplus
+          startPos--;
         }
-        textarea.value = textarea.value.slice(0, startPos) + textarea.value.slice(endPos)
-        textarea.selectionStart = startPos
-        textarea.selectionEnd = startPos
+        textarea.value = textarea.value.slice(0, startPos) + textarea.value.slice(endPos);
+        textarea.selectionStart = startPos;
+        textarea.selectionEnd = startPos;
       }
 
       if (keyCode === 9) {
-        event.preventDefault()
-        const startPos = textarea.selectionStart
-        const endPos = textarea.selectionEnd
-        textarea.value = textarea.value.slice(0, startPos) + '\t' + textarea.value.slice(endPos)
-        textarea.selectionStart = startPos + 1
-        textarea.selectionEnd = startPos + 1
+        event.preventDefault();
+        const startPos = textarea.selectionStart;
+        const endPos = textarea.selectionEnd;
+        textarea.value = textarea.value.slice(0, startPos) + '\t' + textarea.value.slice(endPos);
+        textarea.selectionStart = startPos + 1;
+        textarea.selectionEnd = startPos + 1;
       }
 
       if (keyCode === 13) {
-        event.preventDefault()
-        textarea.value += '\n'
+        event.preventDefault();
+        textarea.value += '\n';
       }
       if (keyCode === 32) {
-        textarea.value += ' '
+        textarea.value += ' ';
       }
       if (keyCode === 37) {
-        const cursorPosition = textarea.selectionStart
+        const cursorPosition = textarea.selectionStart;
         if (cursorPosition > 0) {
-          textarea.selectionStart = cursorPosition - 1
-          textarea.selectionEnd = cursorPosition - 1
+          textarea.selectionStart = cursorPosition - 1;
+          textarea.selectionEnd = cursorPosition - 1;
         }
       }
       if (keyCode === 38) {
-        const cursorPosition = textarea.selectionStart
-        const currentLine = textarea.value.substr(0, cursorPosition).split('\n').length - 1
-        const currentLineStart = textarea.value.lastIndexOf('\n', cursorPosition - 1) + 1
-        const currentLineEnd = textarea.value.indexOf('\n', cursorPosition)
-        const previousLineStart = textarea.value.lastIndexOf('\n', currentLineStart - 2) + 1
-        const previousLineEnd = textarea.value.indexOf('\n', currentLineStart - 1)
+        const cursorPosition = textarea.selectionStart;
+        const currentLine = textarea.value.substr(0, cursorPosition).split('\n').length - 1;
+        const currentLineStart = textarea.value.lastIndexOf('\n', cursorPosition - 1) + 1;
+        // eslint-disable-next-line no-unused-vars
+        const currentLineEnd = textarea.value.indexOf('\n', cursorPosition);
+        const previousLineStart = textarea.value.lastIndexOf('\n', currentLineStart - 2) + 1;
+        const previousLineEnd = textarea.value.indexOf('\n', currentLineStart - 1);
         if (currentLine > 0) {
           if (previousLineEnd === -1) {
-            textarea.selectionStart = previousLineStart
-            textarea.selectionEnd = previousLineStart
+            textarea.selectionStart = previousLineStart;
+            textarea.selectionEnd = previousLineStart;
           } else {
-            const offset = Math.min(cursorPosition - currentLineStart, previousLineEnd - previousLineStart)
-            textarea.selectionStart = previousLineStart + offset
-            textarea.selectionEnd = previousLineStart + offset
+            // eslint-disable-next-line max-len
+            const offset = Math.min(cursorPosition - currentLineStart, previousLineEnd - previousLineStart);
+            textarea.selectionStart = previousLineStart + offset;
+            textarea.selectionEnd = previousLineStart + offset;
           }
         }
       }
       if (keyCode === 39) {
-        const cursorPosition = textarea.selectionStart
+        const cursorPosition = textarea.selectionStart;
         if (cursorPosition < textarea.value.length) {
-          textarea.selectionStart = cursorPosition + 1
-          textarea.selectionEnd = cursorPosition + 1
+          textarea.selectionStart = cursorPosition + 1;
+          textarea.selectionEnd = cursorPosition + 1;
         }
       }
       if (keyCode === 40) {
-        const cursorPosition = textarea.selectionStart
-        const text = textarea.value
-        const lineIndex = text.substr(0, cursorPosition).split('\n').length - 1
-        const nextLineStartPosition = text.indexOf('\n', cursorPosition) + 1
-        const nextLineEndPosition = text.indexOf('\n', nextLineStartPosition)
+        const cursorPosition = textarea.selectionStart;
+        const text = textarea.value;
+        // eslint-disable-next-line no-unused-vars
+        const lineIndex = text.substr(0, cursorPosition).split('\n').length - 1;
+        const nextLineStartPosition = text.indexOf('\n', cursorPosition) + 1;
+        const nextLineEndPosition = text.indexOf('\n', nextLineStartPosition);
 
         if (nextLineEndPosition === -1) {
-          textarea.selectionStart = text.length
-          textarea.selectionEnd = text.length
+          textarea.selectionStart = text.length;
+          textarea.selectionEnd = text.length;
         } else {
-          const newCursorPosition = nextLineStartPosition + (cursorPosition - nextLineEndPosition - 1)
-          textarea.selectionStart = newCursorPosition
-          textarea.selectionEnd = newCursorPosition
+          // eslint-disable-next-line max-len
+          const newCursorPosition = nextLineStartPosition + (cursorPosition - nextLineEndPosition - 1);
+          textarea.selectionStart = newCursorPosition;
+          textarea.selectionEnd = newCursorPosition;
         }
       }
     }
-  })
-})
+  });
+});
 
-const shiftKey = document.querySelector('.key[data-key-code="16"]')
+const shiftKey = document.querySelector('.key[data-key-code="16"]');
 
 shiftKey.addEventListener('mousedown', () => {
-  const language = currentLanguage === 'en' ? 'enShift' : 'ruShift'
+  const language = currentLanguage === 'en' ? 'enShift' : 'ruShift';
   macLetterKeys.forEach(key => {
-    const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+    const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`);
     if (element) {
-      element.innerHTML = key[language]
+      element.innerHTML = key[language];
     }
-  })
-})
+  });
+});
 
 shiftKey.addEventListener('mouseup', () => {
-  const language = currentLanguage === 'en' ? 'en' : 'ru'
+  const language = currentLanguage === 'en' ? 'en' : 'ru';
   macLetterKeys.forEach(key => {
-    const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+    const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`);
     if (element) {
-      element.textContent = key[language]
+      element.textContent = key[language];
     }
-  })
-})
+  });
+});
 
 document.addEventListener('keydown', (event) => {
-  const keyCode = event.keyCode
+  const keyCode = event.keyCode;
 
-  const key = document.querySelector(`.key[data-key-code="${keyCode}"]`)
+  const key = document.querySelector(`.key[data-key-code="${keyCode}"]`);
   if (key) {
-    key.classList.add('active')
+    key.classList.add('active');
   }
 
   if (event.keyCode === 16) {
-    const language = currentLanguage === 'en' ? 'enShift' : 'ruShift'
+    const language = currentLanguage === 'en' ? 'enShift' : 'ruShift';
     macLetterKeys.forEach(key => {
-      const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+      const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`);
       if (element) {
-        element.textContent = key[language]
+        element.textContent = key[language];
       }
-    })
+    });
   }
-})
+});
 
 document.addEventListener('keyup', (event) => {
-  const keyCode = event.keyCode
-  const key = document.querySelector(`.key[data-key-code="${keyCode}"]`)
+  const keyCode = event.keyCode;
+  const key = document.querySelector(`.key[data-key-code="${keyCode}"]`);
   if (key) {
-    key.classList.remove('active')
+    key.classList.remove('active');
   }
 
   if (event.keyCode === 16) {
-    const language = currentLanguage === 'en' ? 'en' : 'ru'
+    const language = currentLanguage === 'en' ? 'en' : 'ru';
     macLetterKeys.forEach(key => {
-      const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`)
+      const element = document.querySelector(`.key[data-key-code="${key.keyCode}"]`);
       if (element) {
-        element.textContent = key[language]
+        element.textContent = key[language];
       }
-    })
+    });
   }
-})
+});
