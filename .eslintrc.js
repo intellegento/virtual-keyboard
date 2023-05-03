@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  extends: 'standard',
+  extends: 'airbnb-base/legacy',
   overrides: [
   ],
   parserOptions: {
@@ -12,4 +12,4 @@ module.exports = {
   },
   rules: {
   }
-}
+};
